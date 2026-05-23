@@ -369,6 +369,7 @@ Step 10 added package and recovery support:
 
 - `scripts\package\create_release_package.ps1` - creates a local release folder and zip package.
 - `docs\INSTALL_AND_RECOVERY.md` - build, package, install, recovery, and data-safety instructions.
+- `docs\LATEST_EXECUTION_SUMMARY.md` - latest execution summary for future feature planning.
 
 Package output:
 

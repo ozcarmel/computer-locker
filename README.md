@@ -13,6 +13,7 @@ The project currently contains a Python/Tkinter Windows lock-app prototype, loca
 - `PROJECT_REFERENCE.md` contains the stable project baseline and recovery notes.
 - `AGENTS.md` contains the project agents and their responsibilities.
 - `docs\DEVELOPMENT_STEPS.md` tracks the approved step-by-step development plan.
+- `docs\LATEST_EXECUTION_SUMMARY.md` summarizes the latest completed implementation and setup steps.
 
 ## Folder Overview
 
