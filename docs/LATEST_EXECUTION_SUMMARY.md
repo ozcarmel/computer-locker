@@ -36,6 +36,7 @@ This file summarizes the latest completed project work and can be used as a refe
 - The app includes:
   - 20-minute work/break logic.
   - Full-screen regular break lock screen.
+  - Parent password field on the regular break lock screen to finish the countdown early.
   - Daily usage limit lock screen.
   - Parent password override.
   - Parent-added extra time cap.

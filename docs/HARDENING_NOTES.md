@@ -8,6 +8,7 @@ Step 7 improves casual bypass resistance for the current Python prototype.
 - Alt+F4 on the parent control window opens a parent password prompt instead of closing immediately.
 - The `Test Lock Screen` button now requires the parent password.
 - The `Parent Exit` button requires the parent password.
+- The regular break lock screen includes a parent password field that sets the countdown to `00:00`.
 - Incorrect parent password attempts are recorded in the local event log.
 - Authorized parent exits are recorded in the local event log.
 - The daily-limit screen continues to ignore spacebar and common close shortcuts.

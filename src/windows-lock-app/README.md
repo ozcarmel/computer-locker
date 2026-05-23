@@ -10,6 +10,7 @@ Current Step 2 prototype responsibilities:
 - Show the message: "Computer is locked for 20 min. Take a break"
 - Show a countdown timer starting at `20:00`.
 - Keep the lock screen visible at `00:00` until the spacebar is pressed.
+- Allow parent password on the regular lock screen to set the timer to `00:00`.
 
 Current Step 3 prototype responsibilities:
 
@@ -46,6 +47,7 @@ Current Step 7 prototype responsibilities:
 - Require the parent password before exiting the app.
 - Prevent casual closing through the window close button and Alt+F4.
 - Log denied parent actions and authorized parent exits.
+- Allow parent password to finish the regular break countdown early.
 
 Not implemented yet:
 

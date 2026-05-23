@@ -152,6 +152,7 @@ Current prototype behavior:
 - Shows a timer starting at `20:00`.
 - Leaves the lock screen visible when the timer reaches `00:00`.
 - Allows spacebar release only after the timer reaches `00:00`.
+- Allows the parent password on the regular lock screen to reset the timer to `00:00`, then spacebar can release the lock.
 - Supports short test runs with the `LOCK_APP_TEST_SECONDS` environment variable.
 
 ## Implemented Usage Timer Logic
@@ -296,6 +297,7 @@ Current hardening behavior:
 - Alt+F4 on the parent control window requires the parent password.
 - The test lock button requires the parent password.
 - The parent exit button requires the parent password.
+- The regular break lock screen includes a parent password field that can finish the break countdown early.
 - Incorrect parent-password attempts are logged.
 - Authorized parent exits are logged.
 

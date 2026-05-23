@@ -14,6 +14,9 @@ class ParentAuthTests(unittest.TestCase):
         self.assertFalse(verify_parent_password("", ""))
         self.assertFalse(verify_parent_password("anything", ""))
 
+    def test_rejects_none_candidate(self):
+        self.assertFalse(verify_parent_password(None, "secret"))
+
 
 if __name__ == "__main__":
     unittest.main()
