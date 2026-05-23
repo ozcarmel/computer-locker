@@ -113,6 +113,17 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "C:\
   - `RunLevel Limited`
   - `LogonType Interactive`
 
+## Source Hiding Plan
+
+- The child account can currently see the source project if it can browse `C:\Cultural Aspects`.
+- The safer structure is:
+  - runtime app under `C:\Program Files\Cultural Aspects`
+  - runtime logs/data under `C:\ProgramData\Cultural Aspects`
+  - source project hidden/protected from the child account
+- Added scripts:
+  - `scripts\admin\install_protected_runtime.ps1`
+  - `scripts\admin\protect_source_folder.ps1`
+
 ## Important Compatibility Fix
 
 - The first scheduled-task installation failed because this Windows version did not accept:

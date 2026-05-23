@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -19,6 +20,7 @@ class GenerateReportTests(unittest.TestCase):
                     str(output_path),
                 ],
                 cwd=app_dir,
+                env={**os.environ, "LOCK_APP_EVENTS_DIR": str(Path(directory) / "events")},
                 text=True,
                 capture_output=True,
                 check=True,

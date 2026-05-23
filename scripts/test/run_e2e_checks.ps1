@@ -25,7 +25,9 @@ Pop-Location
 Write-Step "PowerShell script syntax"
 $scripts = @(
     "scripts\admin\install_startup_task.ps1",
+    "scripts\admin\install_protected_runtime.ps1",
     "scripts\admin\launch_lock_app.ps1",
+    "scripts\admin\protect_source_folder.ps1",
     "scripts\admin\uninstall_startup_task.ps1",
     "scripts\build\build_windows_exe.ps1",
     "scripts\package\create_release_package.ps1",

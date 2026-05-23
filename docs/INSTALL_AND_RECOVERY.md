@@ -67,6 +67,30 @@ The task name is:
 ComputerLocker-ChildLogon
 ```
 
+## Install Protected Runtime
+
+Use this after `cultural-aspects.exe` has been built. It copies only the runtime app to `C:\Program Files\Cultural Aspects`, writes runtime logs/data under `C:\ProgramData\Cultural Aspects`, and updates the scheduled task to run from the protected install folder instead of the source project folder.
+
+This requires an elevated Administrator PowerShell window:
+
+```powershell
+Set-Location -LiteralPath 'C:\Cultural Aspects'
+.\scripts\admin\install_protected_runtime.ps1 -ChildUsername 'FBI\gilic'
+```
+
+## Protect Source Folder
+
+Only run this after the protected runtime is installed and verified. It hides and ACL-protects `C:\Cultural Aspects` so the child account cannot browse the project source.
+
+This requires an elevated Administrator PowerShell window:
+
+```powershell
+Set-Location -LiteralPath 'C:\Cultural Aspects'
+.\scripts\admin\protect_source_folder.ps1 -AdminUsername 'FBI\ozcar' -ChildUsername 'FBI\gilic'
+```
+
+After this, do future development from the administrator account or from the GitHub repository.
+
 ## Remove Startup Task
 
 This requires an elevated Administrator PowerShell window:
