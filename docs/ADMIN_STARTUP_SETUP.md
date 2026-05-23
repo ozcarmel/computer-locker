@@ -72,6 +72,8 @@ You can also check Task Scheduler for:
 ComputerLocker-ChildLogon
 ```
 
+The scheduled task is configured with `RunLevel Limited` so it runs in the child user's interactive session without requesting elevation for the child account.
+
 ## Current Limitations
 
 - This setup can start `cultural-aspects.exe` after it is built. If the executable is missing, it falls back to the Python prototype.

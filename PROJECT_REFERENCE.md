@@ -280,6 +280,8 @@ Expected executable path after build:
 
 The scheduled-task launcher prefers `cultural-aspects.exe` when it exists and falls back to the Python prototype only when the executable has not been built yet.
 
+The scheduled task uses `RunLevel Limited`, which is the Windows ScheduledTasks enum for least-privileged interactive execution on this machine.
+
 ## Implemented Prototype Hardening
 
 Step 7 added practical prototype hardening:
