@@ -1,0 +1,20 @@
+{
+  "2026-05-23": {
+    "dailyLimitLockAppearances": 1,
+    "parentActionDeniedCount": 0,
+    "parentExitAllowedCount": 1,
+    "parentExtraSecondsGranted": 1200,
+    "regularLockAppearances": 5,
+    "testLockAppearances": 1,
+    "unlockedUsageSeconds": 7200
+  },
+  "2026-05-24": {
+    "dailyLimitLockAppearances": 0,
+    "parentActionDeniedCount": 1,
+    "parentExitAllowedCount": 0,
+    "parentExtraSecondsGranted": 0,
+    "regularLockAppearances": 2,
+    "testLockAppearances": 0,
+    "unlockedUsageSeconds": 2400
+  }
+}
