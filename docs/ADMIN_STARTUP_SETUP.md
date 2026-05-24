@@ -78,4 +78,5 @@ The scheduled task is configured with `RunLevel Limited` so it runs in the child
 
 - This setup can start `cultural-aspects.exe` after it is built. If the executable is missing, it falls back to the Python prototype.
 - The app is still visible as a normal process to the child account. Stronger anti-bypass behavior belongs to Step 7.
-- Parent password storage is still prototype-only and must be hardened later.
+- The parent password must be supplied through the protected startup task launcher.
+  Do not commit parent passwords or other credentials to source control.

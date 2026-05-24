@@ -103,7 +103,7 @@ $env:LOCK_APP_PARENT_PASSWORD = "parent"
 python .\app.py
 ```
 
-Prototype note: if `LOCK_APP_PARENT_PASSWORD` is not set, the temporary prototype password is `parent`. Production code must replace this with secure password setup and storage.
+Set `LOCK_APP_PARENT_PASSWORD` before launching the app. If it is not set, parent actions are disabled because there is no fallback password.
 
 ## Test
 

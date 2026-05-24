@@ -5,7 +5,8 @@ param(
     [string] $SourceProjectRoot = "C:\Cultural Aspects",
     [string] $InstallDir = "C:\Program Files\Cultural Aspects",
     [string] $RuntimeDataDir = "C:\ProgramData\Cultural Aspects",
-    [string] $TaskName = "ComputerLocker-ChildLogon"
+    [string] $TaskName = "ComputerLocker-ChildLogon",
+    [string] $ParentPassword = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,6 +20,18 @@ function Assert-Administrator {
 }
 
 Assert-Administrator
+
+function Get-PasswordHash {
+    param([string] $Password)
+
+    if ([string]::IsNullOrWhiteSpace($Password)) {
+        return ""
+    }
+
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($Password)
+    $hashBytes = [System.Security.Cryptography.SHA256]::Create().ComputeHash($bytes)
+    return -join ($hashBytes | ForEach-Object { $_.ToString("x2") })
+}
 
 $resolvedSourceRoot = (Resolve-Path -LiteralPath $SourceProjectRoot).Path
 $sourceExe = Join-Path $resolvedSourceRoot "src\windows-lock-app\dist\cultural-aspects.exe"
@@ -36,6 +49,7 @@ $eventsDir = Join-Path $RuntimeDataDir "data\events"
 $logsDir = Join-Path $RuntimeDataDir "logs"
 $installedExe = Join-Path $InstallDir "cultural-aspects.exe"
 $installedLauncher = Join-Path $InstallDir "launch_lock_app.ps1"
+$parentPasswordHash = Get-PasswordHash $ParentPassword
 
 New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
 New-Item -ItemType Directory -Force -Path $eventsDir | Out-Null
@@ -58,6 +72,10 @@ $actionArguments = @(
     "-EventsDir", "`"$eventsDir`"",
     "-LogDir", "`"$logsDir`""
 ) -join " "
+
+if (-not [string]::IsNullOrWhiteSpace($parentPasswordHash)) {
+    $actionArguments = "$actionArguments -ParentPasswordHash `"$parentPasswordHash`""
+}
 
 $action = New-ScheduledTaskAction `
     -Execute "powershell.exe" `
@@ -96,4 +114,7 @@ Write-Output "Installed protected runtime: $installedExe"
 Write-Output "Runtime data folder: $RuntimeDataDir"
 Write-Output "Updated scheduled task: $TaskName"
 Write-Output "Child user trigger: $ChildUsername"
+if (-not [string]::IsNullOrWhiteSpace($ParentPassword)) {
+    Write-Output "Parent password configured for launcher environment."
+}
 Write-Output "The project source can now be hidden or ACL-protected separately."

@@ -3,7 +3,9 @@ param(
     [string] $PythonExe = "",
     [string] $InstalledExePath = "",
     [string] $EventsDir = "",
-    [string] $LogDir = ""
+    [string] $LogDir = "",
+    [string] $ParentPassword = "",
+    [string] $ParentPasswordHash = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -34,6 +36,12 @@ if ([string]::IsNullOrWhiteSpace($EventsDir)) {
 }
 
 $env:LOCK_APP_EVENTS_DIR = $EventsDir
+if (-not [string]::IsNullOrWhiteSpace($ParentPassword)) {
+    $env:LOCK_APP_PARENT_PASSWORD = $ParentPassword
+}
+if (-not [string]::IsNullOrWhiteSpace($ParentPasswordHash)) {
+    $env:LOCK_APP_PARENT_PASSWORD_HASH = $ParentPasswordHash
+}
 
 try {
     if (-not [string]::IsNullOrWhiteSpace($InstalledExePath)) {
