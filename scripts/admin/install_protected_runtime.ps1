@@ -65,6 +65,7 @@ $action = New-ScheduledTaskAction `
     -WorkingDirectory $InstallDir
 
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $ChildUsername
+$trigger.Delay = "PT30S"
 $principal = New-ScheduledTaskPrincipal `
     -UserId $ChildUsername `
     -LogonType Interactive `

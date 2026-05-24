@@ -4,8 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#184e77">
-    <title>Cultural Aspects Report</title>
+    <title>Gili's Daily Activity</title>
     <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Gili Activity">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -13,38 +18,65 @@
       <header class="top-bar">
         <div>
           <p class="eyebrow">Parent report</p>
-          <h1>Cultural Aspects</h1>
+          <h1>Gili's Daily Activity</h1>
         </div>
-        <button id="refreshButton" class="icon-button" type="button" title="Reload sample report" aria-label="Reload report">↻</button>
+        <button id="refreshButton" class="icon-button" type="button" title="Reload reports" aria-label="Reload reports">↻</button>
       </header>
 
-      <section class="summary-strip" aria-label="Report summary">
-        <div>
-          <span id="totalUsage" class="metric">0h 00m</span>
-          <span class="label">usage logged</span>
+      <section class="activity-section" aria-label="Gili activity report">
+        <div class="section-heading">
+          <h2>Browser activity</h2>
+          <span id="activitySource">No activity report</span>
         </div>
-        <div>
-          <span id="totalLocks" class="metric">0</span>
-          <span class="label">lock screens</span>
+        <div id="activityEmptyState" class="empty-state" hidden>No activity report is available yet.</div>
+        <div id="activityReport" class="activity-report" hidden>
+          <article class="activity-card highlight-card">
+            <div class="activity-card-heading">
+              <h3>Browser activity</h3>
+              <strong id="browserTotalTime">0h 00m</strong>
+            </div>
+            <div id="browserHistoryList" class="activity-list"></div>
+          </article>
+          <article class="activity-card">
+            <div class="activity-card-heading">
+              <h3>Apps used</h3>
+              <strong id="appsTotalTime">0h 00m</strong>
+            </div>
+            <div id="appsUsedList" class="activity-list"></div>
+          </article>
         </div>
-        <div>
-          <span id="reportDays" class="metric">0</span>
-          <span class="label">days</span>
+      </section>
+
+      <section class="locker-section" aria-label="Locker timing log">
+        <div class="section-heading">
+          <h2>Locker timing</h2>
+          <span id="dataSource">Sample data</span>
         </div>
+
+        <section class="summary-strip" aria-label="Locker summary">
+          <div>
+            <span id="totalUsage" class="metric">0h 00m</span>
+            <span class="label">unlocked time</span>
+          </div>
+          <div>
+            <span id="totalLocks" class="metric">0</span>
+            <span class="label">lock screens</span>
+          </div>
+          <div>
+            <span id="reportDays" class="metric">0</span>
+            <span class="label">days</span>
+          </div>
+        </section>
+
+        <section class="timeline-section" aria-label="Daily locker timing">
+          <div id="emptyState" class="empty-state" hidden>No locker timing data is available yet.</div>
+          <div id="reportList" class="report-list"></div>
+        </section>
       </section>
 
       <section class="import-panel" aria-label="Import report data">
-        <label for="reportFile">Load report JSON</label>
+        <label for="reportFile">Load locker report JSON</label>
         <input id="reportFile" type="file" accept="application/json,.json">
-      </section>
-
-      <section class="timeline-section" aria-label="Daily reports">
-        <div class="section-heading">
-          <h2>Daily activity</h2>
-          <span id="dataSource">Sample data</span>
-        </div>
-        <div id="emptyState" class="empty-state" hidden>No report data is available yet.</div>
-        <div id="reportList" class="report-list"></div>
       </section>
     </main>
 
@@ -59,20 +91,12 @@
         </div>
         <dl class="detail-grid">
           <div>
-            <dt>Regular locks</dt>
-            <dd data-field="regularLockAppearances"></dd>
+            <dt>Lock screens</dt>
+            <dd data-field="totalLocks"></dd>
           </div>
           <div>
-            <dt>Daily limit locks</dt>
-            <dd data-field="dailyLimitLockAppearances"></dd>
-          </div>
-          <div>
-            <dt>Parent extra time</dt>
-            <dd data-field="parentExtraSecondsGranted"></dd>
-          </div>
-          <div>
-            <dt>Test locks</dt>
-            <dd data-field="testLockAppearances"></dd>
+            <dt>Parent actions</dt>
+            <dd data-field="parentActions"></dd>
           </div>
         </dl>
       </article>

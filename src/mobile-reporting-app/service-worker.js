@@ -1,9 +1,11 @@
-const CACHE_NAME = "cultural-aspects-report-v1";
+const CACHE_NAME = "cultural-aspects-report-v5";
 const APP_FILES = [
   "index.html",
   "styles.css",
   "app.js",
-  "manifest.webmanifest"
+  "manifest.webmanifest",
+  "icons/icon-192.png",
+  "icons/icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {

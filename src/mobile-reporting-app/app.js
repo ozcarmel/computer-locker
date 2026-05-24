@@ -28,6 +28,13 @@ const reportDays = document.querySelector("#reportDays");
 const dataSource = document.querySelector("#dataSource");
 const fileInput = document.querySelector("#reportFile");
 const refreshButton = document.querySelector("#refreshButton");
+const activitySource = document.querySelector("#activitySource");
+const activityEmptyState = document.querySelector("#activityEmptyState");
+const activityReport = document.querySelector("#activityReport");
+const appsUsedList = document.querySelector("#appsUsedList");
+const browserHistoryList = document.querySelector("#browserHistoryList");
+const browserTotalTime = document.querySelector("#browserTotalTime");
+const appsTotalTime = document.querySelector("#appsTotalTime");
 
 function formatDuration(seconds) {
   const totalMinutes = Math.max(0, Math.round(Number(seconds || 0) / 60));
@@ -46,8 +53,31 @@ function formatDate(dateKey) {
   }).format(date);
 }
 
+function formatTime(value) {
+  if (!value) {
+    return "";
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value.slice(11, 16);
+  }
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+}
+
 function locksForDay(day) {
   return Number(day.regularLockAppearances || 0) + Number(day.dailyLimitLockAppearances || 0);
+}
+
+function parentActionsForDay(day) {
+  return Number(day.parentActionDeniedCount || 0) + Number(day.parentExitAllowedCount || 0);
+}
+
+function isBrowserApp(appName) {
+  const normalized = String(appName || "").toLowerCase();
+  return ["chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe"].includes(normalized);
 }
 
 function normalizeReport(report) {
@@ -76,10 +106,8 @@ function renderReport(report, sourceLabel) {
     card.querySelector("h3").textContent = formatDate(dateKey);
     card.querySelector(".day-subtitle").textContent = dateKey;
     card.querySelector(".usage-pill").textContent = formatDuration(day.unlockedUsageSeconds);
-    card.querySelector('[data-field="regularLockAppearances"]').textContent = day.regularLockAppearances || 0;
-    card.querySelector('[data-field="dailyLimitLockAppearances"]').textContent = day.dailyLimitLockAppearances || 0;
-    card.querySelector('[data-field="parentExtraSecondsGranted"]').textContent = formatDuration(day.parentExtraSecondsGranted);
-    card.querySelector('[data-field="testLockAppearances"]').textContent = day.testLockAppearances || 0;
+    card.querySelector('[data-field="totalLocks"]').textContent = locksForDay(day);
+    card.querySelector('[data-field="parentActions"]').textContent = parentActionsForDay(day);
     reportList.appendChild(card);
   }
 
@@ -94,9 +122,85 @@ async function loadBundledReport() {
     if (!response.ok) {
       throw new Error("No bundled report");
     }
-    renderReport(await response.json(), "Exported report");
+    renderReport(await response.json(), "Locker report");
   } catch (_error) {
-    renderReport(sampleReport, "Sample data");
+    renderReport(sampleReport, "Sample locker data");
+  }
+}
+
+function renderEmptyList(container, message) {
+  const item = document.createElement("p");
+  item.className = "muted-line";
+  item.textContent = message;
+  container.replaceChildren(item);
+}
+
+function renderActivityReport(report, sourceLabel) {
+  const hasReport = report && typeof report === "object";
+  activitySource.textContent = sourceLabel;
+  activityEmptyState.hidden = hasReport;
+  activityReport.hidden = !hasReport;
+
+  if (!hasReport) {
+    appsUsedList.replaceChildren();
+    browserHistoryList.replaceChildren();
+    browserTotalTime.textContent = "0h 00m";
+    appsTotalTime.textContent = "0h 00m";
+    return;
+  }
+
+  const apps = Array.isArray(report.appsUsed) ? report.appsUsed : [];
+  const browserHistory = Array.isArray(report.browserHistory) ? report.browserHistory : [];
+  const browserApps = apps.filter((app) => isBrowserApp(app.appName));
+  const otherApps = apps.filter((app) => !isBrowserApp(app.appName));
+  const browserSeconds = browserApps.reduce((sum, app) => sum + Number(app.seconds || 0), 0);
+  const appSeconds = otherApps.reduce((sum, app) => sum + Number(app.seconds || 0), 0);
+
+  browserTotalTime.textContent = formatDuration(browserSeconds);
+  appsTotalTime.textContent = formatDuration(appSeconds);
+
+  if (browserHistory.length === 0) {
+    renderEmptyList(browserHistoryList, "No browser history found for this report period.");
+  } else {
+    browserHistoryList.replaceChildren(...browserHistory.slice(0, 12).map((entry) => {
+      const row = document.createElement("div");
+      row.className = "activity-row stacked";
+      const title = document.createElement("strong");
+      title.textContent = entry.title || entry.url || "Visited page";
+      const meta = document.createElement("span");
+      meta.textContent = `${formatTime(entry.visitedAt)} - ${entry.browser || "Browser"}`;
+      const link = document.createElement("small");
+      link.textContent = entry.url || "";
+      row.append(title, meta, link);
+      return row;
+    }));
+  }
+
+  if (otherApps.length === 0) {
+    renderEmptyList(appsUsedList, "No non-browser app usage recorded yet.");
+  } else {
+    appsUsedList.replaceChildren(...otherApps.slice(0, 8).map((app) => {
+      const row = document.createElement("div");
+      row.className = "activity-row";
+      const title = document.createElement("strong");
+      title.textContent = app.appName || "Unknown app";
+      const meta = document.createElement("span");
+      meta.textContent = formatDuration(app.seconds);
+      row.append(title, meta);
+      return row;
+    }));
+  }
+}
+
+async function loadActivityReport() {
+  try {
+    const response = await fetch("activity-report.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("No activity report");
+    }
+    renderActivityReport(await response.json(), "Latest activity report");
+  } catch (_error) {
+    renderActivityReport(null, "No activity report");
   }
 }
 
@@ -115,10 +219,29 @@ fileInput.addEventListener("change", async () => {
   }
 });
 
-refreshButton.addEventListener("click", loadBundledReport);
+async function refreshReports() {
+  refreshButton.disabled = true;
+  activitySource.textContent = "Refreshing...";
+  dataSource.textContent = "Refreshing...";
+  try {
+    const response = await fetch("/api/refresh", { method: "POST", cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("Refresh endpoint unavailable");
+    }
+  } catch (_error) {
+    // Static-file fallback: reload the latest generated JSON if the server endpoint is unavailable.
+  } finally {
+    await loadActivityReport();
+    await loadBundledReport();
+    refreshButton.disabled = false;
+  }
+}
+
+refreshButton.addEventListener("click", refreshReports);
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   navigator.serviceWorker.register("service-worker.js").catch(() => {});
 }
 
+loadActivityReport();
 loadBundledReport();

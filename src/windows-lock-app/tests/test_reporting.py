@@ -14,6 +14,7 @@ from reporting import (
     TEST_LOCK_STARTED_EVENT,
     USAGE_EVENT,
     build_daily_report,
+    build_event_report,
     load_events,
 )
 
@@ -105,6 +106,32 @@ class ReportingTests(unittest.TestCase):
         self.assertEqual(report["2026-05-23"]["testLockAppearances"], 1)
         self.assertEqual(report["2026-05-23"]["parentActionDeniedCount"], 1)
         self.assertEqual(report["2026-05-23"]["parentExitAllowedCount"], 1)
+
+    def test_event_report_formats_parent_friendly_timeline(self):
+        events = [
+            {
+                "date": "2026-05-24",
+                "timestamp": "2026-05-24T10:25:01",
+                "windowsUsername": "gilic",
+                "eventType": TEST_LOCK_STARTED_EVENT,
+                "details": {},
+            },
+            {
+                "date": "2026-05-24",
+                "timestamp": "2026-05-24T10:25:08",
+                "windowsUsername": "gilic",
+                "eventType": REGULAR_LOCK_STARTED_EVENT,
+                "details": {"breakSeconds": 1200, "completedCycles": 1},
+            },
+        ]
+
+        report = build_event_report(events)
+
+        self.assertIn("Computer Locker Event Report", report)
+        self.assertIn("2026-05-24", report)
+        self.assertIn("Timeline", report)
+        self.assertIn("10:25:01 | Test lock started | gilic", report)
+        self.assertIn("10:25:08 | Break lock started | gilic - break length 20m 00s; cycles 1", report)
 
 
 if __name__ == "__main__":

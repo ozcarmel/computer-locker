@@ -4,8 +4,10 @@ This folder contains the parent-facing mobile reporting app prototype.
 
 Current responsibilities:
 
+- Install on a phone as a home-screen web app.
 - Show daily logged-in computer usage hours.
 - Show when lock screens appeared during the day.
+- Show Gili's browser activity and app usage.
 - Organize reports by date.
 - Keep the report simple and readable.
 - Load exported report JSON from the Windows lock app.
@@ -24,6 +26,14 @@ Open:
 ```text
 http://127.0.0.1:8088
 ```
+
+From a phone on the same home network, use the computer's IPv4 address:
+
+```text
+http://<computer-ip>:8088
+```
+
+See `docs\MOBILE_APP_INSTALL.md` for phone install steps.
 
 ## Export Report Data
 

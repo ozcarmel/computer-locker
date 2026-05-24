@@ -56,3 +56,24 @@ This agent is responsible for defining and maintaining the simple mobile reporti
 - The mobile app must report when the screen lock appeared during the day.
 - Reports should be organized by date.
 - Reports should be simple, readable, and parent-facing.
+
+# Activity reporting agent
+
+## Project Agent
+
+Agent name: Activity reporting agent
+
+## Responsibility
+
+This agent is responsible for collecting simple parent-facing activity reports without interfering with the computer locker.
+
+## Activity Reporting Rules
+
+- The activity reporter must run separately from the lock application.
+- Failure in activity reporting must not stop, delay, or modify the locker.
+- The reporter may sample active app/window usage while the child account is logged in.
+- The reporter may read local browser history for Chrome, Edge, and Firefox when generating reports.
+- Activity reports must be simple and parent-facing.
+- Activity data and reports must be stored outside source control.
+- Activity reports should be available to the mobile reporting app.
+- Scheduled activity reporting tasks must be installed and managed by the Admin account.

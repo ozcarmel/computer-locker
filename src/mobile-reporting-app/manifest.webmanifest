@@ -1,9 +1,25 @@
 {
-  "name": "Cultural Aspects Report",
-  "short_name": "Cultural Report",
-  "start_url": "index.html",
+  "name": "Gili's Daily Activity",
+  "short_name": "Gili Activity",
+  "description": "Parent-facing report for Gili's browser activity, app usage, and locker timing.",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f7f9fb",
   "theme_color": "#184e77",
-  "description": "Parent-facing report for child computer usage and lock events."
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

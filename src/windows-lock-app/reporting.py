@@ -18,6 +18,18 @@ APP_STARTED_EVENT = "app_started"
 PARENT_ACTION_DENIED_EVENT = "parent_action_denied"
 PARENT_EXIT_ALLOWED_EVENT = "parent_exit_allowed"
 
+EVENT_LABELS = {
+    APP_STARTED_EVENT: "App started",
+    USAGE_EVENT: "Usage interval completed",
+    REGULAR_LOCK_STARTED_EVENT: "Break lock started",
+    REGULAR_LOCK_RELEASED_EVENT: "Break lock released",
+    DAILY_LIMIT_STARTED_EVENT: "Daily limit lock started",
+    PARENT_EXTRA_GRANTED_EVENT: "Parent extra time granted",
+    TEST_LOCK_STARTED_EVENT: "Test lock started",
+    PARENT_ACTION_DENIED_EVENT: "Parent password denied",
+    PARENT_EXIT_ALLOWED_EVENT: "Parent exit allowed",
+}
+
 
 class EventLogger:
     def __init__(self, events_dir=None, clock=None, username=None):
@@ -92,3 +104,110 @@ def build_daily_report(events):
             report[day]["parentExitAllowedCount"] += 1
 
     return dict(sorted(report.items()))
+
+
+def format_duration(seconds):
+    seconds = max(0, int(seconds))
+    hours, remainder = divmod(seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    if hours:
+        return f"{hours}h {minutes:02d}m"
+    if minutes:
+        return f"{minutes}m {seconds:02d}s"
+    return f"{seconds}s"
+
+
+def event_display_name(event_type):
+    return EVENT_LABELS.get(event_type, event_type.replace("_", " ").title())
+
+
+def event_detail_text(event):
+    details = event.get("details", {})
+    event_type = event.get("eventType", "")
+
+    if event_type == APP_STARTED_EVENT:
+        return (
+            "work "
+            f"{format_duration(details.get('workSeconds', 0))}, "
+            "break "
+            f"{format_duration(details.get('breakSeconds', 0))}, "
+            "daily limit "
+            f"{format_duration(details.get('dailyLimitSeconds', 0))}"
+        )
+    if event_type == USAGE_EVENT:
+        return (
+            f"used {format_duration(details.get('durationSeconds', 0))}; "
+            f"total today {format_duration(details.get('unlockedSecondsToday', 0))}; "
+            f"cycles {details.get('completedCycles', 0)}"
+        )
+    if event_type == REGULAR_LOCK_STARTED_EVENT:
+        return (
+            f"break length {format_duration(details.get('breakSeconds', 0))}; "
+            f"cycles {details.get('completedCycles', 0)}"
+        )
+    if event_type == DAILY_LIMIT_STARTED_EVENT:
+        return (
+            f"used today {format_duration(details.get('unlockedSecondsToday', 0))}; "
+            f"limit {format_duration(details.get('effectiveDailyLimitSeconds', 0))}"
+        )
+    if event_type == PARENT_EXTRA_GRANTED_EVENT:
+        return (
+            f"granted {format_duration(details.get('grantedSeconds', 0))}; "
+            f"extra today {format_duration(details.get('parentExtraSecondsToday', 0))}"
+        )
+    if event_type == PARENT_ACTION_DENIED_EVENT:
+        return f"action: {details.get('action', 'parent action')}"
+
+    return ""
+
+
+def build_event_report(events):
+    events_by_date = defaultdict(list)
+    for event in sorted(events, key=lambda item: item.get("timestamp", "")):
+        events_by_date[event.get("date", "Unknown date")].append(event)
+
+    daily_report = build_daily_report(events)
+    lines = [
+        "Computer Locker Event Report",
+        "=" * 28,
+        "",
+    ]
+
+    if not events:
+        lines.append("No events were recorded.")
+        return "\n".join(lines) + "\n"
+
+    for day in sorted(events_by_date):
+        summary = daily_report.get(day, {})
+        day_events = events_by_date[day]
+
+        lines.extend(
+            [
+                day,
+                "-" * len(day),
+                f"Total unlocked usage: {format_duration(summary.get('unlockedUsageSeconds', 0))}",
+                f"Regular break locks: {summary.get('regularLockAppearances', 0)}",
+                f"Daily limit locks: {summary.get('dailyLimitLockAppearances', 0)}",
+                f"Parent extra time granted: {format_duration(summary.get('parentExtraSecondsGranted', 0))}",
+                f"Test locks: {summary.get('testLockAppearances', 0)}",
+                f"Denied parent actions: {summary.get('parentActionDeniedCount', 0)}",
+                f"Parent exits: {summary.get('parentExitAllowedCount', 0)}",
+                "",
+                "Timeline",
+                "--------",
+            ]
+        )
+
+        for event in day_events:
+            timestamp = event.get("timestamp", "")
+            time = timestamp[11:19] if len(timestamp) >= 19 else "--:--:--"
+            username = event.get("windowsUsername") or "unknown user"
+            label = event_display_name(event.get("eventType", "unknown"))
+            detail = event_detail_text(event)
+            suffix = f" - {detail}" if detail else ""
+            lines.append(f"{time} | {label} | {username}{suffix}")
+
+        lines.append("")
+
+    return "\n".join(lines)

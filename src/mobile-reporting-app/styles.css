@@ -80,7 +80,7 @@ h3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .summary-strip > div,
@@ -136,7 +136,8 @@ input[type="file"] {
   margin-bottom: 10px;
 }
 
-#dataSource {
+#dataSource,
+#activitySource {
   color: var(--muted);
   font-size: 0.82rem;
 }
@@ -146,8 +147,78 @@ input[type="file"] {
   gap: 10px;
 }
 
-.day-card {
+.activity-section,
+.locker-section {
+  margin-bottom: 22px;
+}
+
+.activity-report {
+  display: grid;
+  gap: 10px;
+}
+
+.day-card,
+.activity-card {
   padding: 14px;
+}
+
+.activity-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.highlight-card {
+  border-color: #b6d7c7;
+}
+
+.activity-card-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.activity-card-heading strong {
+  color: var(--green);
+  font-size: 1rem;
+}
+
+.activity-list {
+  display: grid;
+  gap: 8px;
+}
+
+.activity-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.activity-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.activity-row span,
+.activity-row small,
+.muted-line {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.activity-row.stacked {
+  display: grid;
+  justify-content: stretch;
+  gap: 3px;
+}
+
+.activity-row small {
+  overflow-wrap: anywhere;
 }
 
 .day-header {

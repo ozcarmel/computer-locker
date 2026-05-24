@@ -90,15 +90,8 @@ class ParentControlApp:
         )
         title.pack(anchor="w")
 
-        intro = ttk.Label(
-            container,
-            text="Step 7 prototype: protected parent controls with automatic breaks and daily-limit lock.",
-            wraplength=450,
-        )
-        intro.pack(anchor="w", pady=(8, 18))
-
         self.status_label = ttk.Label(container, text="", wraplength=450)
-        self.status_label.pack(anchor="w", pady=(0, 16))
+        self.status_label.pack(anchor="w", pady=(12, 16))
 
         button_row = ttk.Frame(container)
         button_row.pack(anchor="w")
@@ -116,14 +109,6 @@ class ParentControlApp:
             command=self._request_parent_exit,
         )
         exit_button.pack(side="left", padx=(12, 0))
-
-        note = ttk.Label(
-            container,
-            text="Parent-only actions require the parent password. Prototype password defaults to 'parent' unless LOCK_APP_PARENT_PASSWORD is set before launch.",
-            wraplength=450,
-            foreground="#4b5563",
-        )
-        note.pack(anchor="w", pady=(24, 0))
 
     def _tick(self):
         status = self.timer.status()
@@ -162,13 +147,11 @@ class ParentControlApp:
         usage = format_seconds(status["unlocked_seconds_today"])
         limit = format_seconds(status["effective_daily_limit_seconds"])
         remaining = format_seconds(status["remaining_work_seconds"])
-        extra_remaining = format_seconds(status["parent_extra_seconds_remaining"])
         self.status_label.configure(
             text=(
                 f"Unlocked today: {usage} of {limit}\n"
                 f"Current work interval remaining: {remaining}\n"
-                f"Completed cycles: {status['completed_cycles']} of {status['max_cycles']}\n"
-                f"Parent extra time remaining today: {extra_remaining}"
+                f"Completed cycles: {status['completed_cycles']} of {status['max_cycles']}"
             )
         )
 
