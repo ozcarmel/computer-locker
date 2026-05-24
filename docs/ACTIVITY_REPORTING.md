@@ -28,6 +28,12 @@ Mobile app copy:
 C:\Cultural Aspects\src\mobile-reporting-app\activity-report.json
 ```
 
+OneDrive sync folder:
+
+```text
+C:\Users\gilic\OneDrive\Gili Activity Report
+```
+
 ## Install Scheduled Tasks
 
 Run from an elevated Administrator PowerShell window:
@@ -63,3 +69,13 @@ Open the computer's LAN IP address from the phone:
 ```text
 http://<computer-ip>:8088
 ```
+
+## OneDrive Sync
+
+The activity report task also copies the mobile app files and latest JSON reports into:
+
+```text
+C:\Users\gilic\OneDrive\Gili Activity Report
+```
+
+Share that OneDrive folder privately with the parent who should read the reports.

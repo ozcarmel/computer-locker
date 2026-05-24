@@ -37,3 +37,15 @@ Use the current IPv4 address with port `8088`.
 - The app reads reports from the computer, so the computer must be on and serving the report.
 - The installed phone icon opens the same local report page.
 - The phone and computer must stay on the same home network.
+
+## Away From Home With OneDrive
+
+The computer also syncs a copy of the app and latest reports to:
+
+```text
+C:\Users\gilic\OneDrive\Gili Activity Report
+```
+
+Share this folder privately from OneDrive with the parent iPhone account. Away from home, the parent can open the OneDrive copy of `index.html` or the shared folder contents to view the latest synced report.
+
+OneDrive sync depends on the computer being online and OneDrive being signed in.

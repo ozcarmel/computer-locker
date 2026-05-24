@@ -13,11 +13,12 @@ MOBILE_APP_DIR = PROJECT_ROOT / "src" / "mobile-reporting-app"
 WINDOWS_APP_DIR = PROJECT_ROOT / "src" / "windows-lock-app"
 ACTIVITY_AGENT_DIR = PROJECT_ROOT / "src" / "activity-reporting-agent"
 RUNTIME_DIR = Path(os.environ.get("PROGRAMDATA", r"C:\ProgramData")) / "Cultural Aspects"
+DEFAULT_CLOUD_DIR = Path(r"C:\Users\gilic\OneDrive\Gili Activity Report")
 
 sys.path.insert(0, str(WINDOWS_APP_DIR))
 sys.path.insert(0, str(ACTIVITY_AGENT_DIR))
 
-from activity_reporter import build_activity_report, write_report  # noqa: E402
+from activity_reporter import build_activity_report, sync_mobile_app_to_cloud, write_report  # noqa: E402
 from reporting import build_daily_report, load_events  # noqa: E402
 
 
@@ -32,6 +33,7 @@ def refresh_reports():
 
     locker_report = build_daily_report(load_events(lock_events_dir))
     write_json(MOBILE_APP_DIR / "report-data.json", locker_report)
+    sync_mobile_app_to_cloud(MOBILE_APP_DIR, DEFAULT_CLOUD_DIR)
 
     scheduled_task_started = False
     try:
@@ -58,6 +60,7 @@ def refresh_reports():
         "scheduledActivityReportStarted": scheduled_task_started,
         "lockerReport": str(MOBILE_APP_DIR / "report-data.json"),
         "activityReport": str(MOBILE_APP_DIR / "activity-report.json"),
+        "cloudFolder": str(DEFAULT_CLOUD_DIR),
     }
 
 

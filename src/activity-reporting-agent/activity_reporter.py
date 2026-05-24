@@ -355,6 +355,36 @@ def write_report(output_path, report):
     output_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def sync_mobile_app_to_cloud(mobile_app_dir, cloud_dir):
+    mobile_app_dir = Path(mobile_app_dir)
+    cloud_dir = Path(cloud_dir)
+    cloud_dir.mkdir(parents=True, exist_ok=True)
+
+    files = [
+        "index.html",
+        "styles.css",
+        "app.js",
+        "manifest.webmanifest",
+        "service-worker.js",
+        "report-data.json",
+        "activity-report.json",
+    ]
+
+    for relative_path in files:
+        source = mobile_app_dir / relative_path
+        if source.exists():
+            target = cloud_dir / relative_path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+
+    icons_source = mobile_app_dir / "icons"
+    icons_target = cloud_dir / "icons"
+    if icons_source.exists():
+        icons_target.mkdir(parents=True, exist_ok=True)
+        for icon in icons_source.glob("*.png"):
+            shutil.copy2(icon, icons_target / icon.name)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Monitor and report Gili's computer activity.")
     parser.add_argument("--mode", choices=("monitor", "report"), default="report")
@@ -362,6 +392,8 @@ def main():
     parser.add_argument("--lock-events-dir", default=str(DEFAULT_LOCK_EVENTS_DIR))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT_PATH))
     parser.add_argument("--mobile-output", default="")
+    parser.add_argument("--mobile-app-dir", default="")
+    parser.add_argument("--cloud-output-dir", default="")
     parser.add_argument("--interval-seconds", type=int, default=30)
     parser.add_argument("--hours", type=int, default=12)
     args = parser.parse_args()
@@ -374,9 +406,13 @@ def main():
     write_report(args.output, report)
     if args.mobile_output:
         write_report(args.mobile_output, report)
+    if args.cloud_output_dir and args.mobile_app_dir:
+        sync_mobile_app_to_cloud(args.mobile_app_dir, args.cloud_output_dir)
     print(f"Wrote activity report: {args.output}")
     if args.mobile_output:
         print(f"Wrote mobile activity report: {args.mobile_output}")
+    if args.cloud_output_dir:
+        print(f"Synced mobile app to: {args.cloud_output_dir}")
 
 
 if __name__ == "__main__":

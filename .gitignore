@@ -23,6 +23,8 @@ config/*password*
 /out/
 src/windows-lock-app/dist/
 src/windows-lock-app/build/
+src/activity-reporting-agent/dist/
+src/activity-reporting-agent/build/
 release/
 __pycache__/
 *.pyc

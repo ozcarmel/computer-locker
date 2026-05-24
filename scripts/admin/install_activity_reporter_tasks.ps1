@@ -5,6 +5,7 @@ param(
     [string] $ProjectRoot = "C:\Cultural Aspects",
     [string] $InstallDir = "C:\Program Files\Cultural Aspects",
     [string] $RuntimeDataDir = "C:\ProgramData\Cultural Aspects",
+    [string] $CloudOutputDir = "C:\Users\gilic\OneDrive\Gili Activity Report",
     [string] $PythonExe = "",
     [string] $MonitorTaskName = "CulturalAspects-ActivityMonitor",
     [string] $ReportTaskName = "CulturalAspects-ActivityReport"
@@ -54,11 +55,13 @@ $activityDir = Join-Path $RuntimeDataDir "activity"
 $lockEventsDir = Join-Path $RuntimeDataDir "data\events"
 $reportPath = Join-Path $RuntimeDataDir "activity-report.json"
 $mobileReportPath = Join-Path $resolvedProjectRoot "src\mobile-reporting-app\activity-report.json"
+$mobileAppDir = Join-Path $resolvedProjectRoot "src\mobile-reporting-app"
 
 New-Item -ItemType Directory -Force -Path $activityDir | Out-Null
 New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $reportPath) | Out-Null
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $mobileReportPath) | Out-Null
+New-Item -ItemType Directory -Force -Path $CloudOutputDir | Out-Null
 
 # The child account writes runtime samples and the generated local report.
 icacls $RuntimeDataDir /grant "*S-1-5-11:(OI)(CI)M" /T | Out-Null
@@ -78,6 +81,8 @@ if (Test-Path -LiteralPath $sourceAgentExe) {
         "--lock-events-dir", "`"$lockEventsDir`"",
         "--output", "`"$reportPath`"",
         "--mobile-output", "`"$mobileReportPath`"",
+        "--mobile-app-dir", "`"$mobileAppDir`"",
+        "--cloud-output-dir", "`"$CloudOutputDir`"",
         "--hours", "12"
     ) -join " "
 }
@@ -96,6 +101,8 @@ else {
         "--lock-events-dir", "`"$lockEventsDir`"",
         "--output", "`"$reportPath`"",
         "--mobile-output", "`"$mobileReportPath`"",
+        "--mobile-app-dir", "`"$mobileAppDir`"",
+        "--cloud-output-dir", "`"$CloudOutputDir`"",
         "--hours", "12"
     ) -join " "
 }
@@ -168,3 +175,4 @@ Write-Output "Child user: $ChildUsername"
 Write-Output "Activity data folder: $activityDir"
 Write-Output "Activity report: $reportPath"
 Write-Output "Mobile app report target: $mobileReportPath"
+Write-Output "OneDrive cloud folder: $CloudOutputDir"

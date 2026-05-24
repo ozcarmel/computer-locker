@@ -43,17 +43,17 @@ try {
 
         Write-LauncherLog "Starting installed executable: $InstalledExePath"
         Set-Location -LiteralPath (Split-Path -Parent $InstalledExePath)
-        & $InstalledExePath
-        Write-LauncherLog "Installed executable exited. ExitCode=$LASTEXITCODE"
-        exit $LASTEXITCODE
+        $process = Start-Process -FilePath $InstalledExePath -WorkingDirectory (Split-Path -Parent $InstalledExePath) -PassThru -Wait
+        Write-LauncherLog "Installed executable exited. ExitCode=$($process.ExitCode)"
+        exit $process.ExitCode
     }
 
     if (Test-Path -LiteralPath $packagedExePath) {
         Write-LauncherLog "Starting packaged executable: $packagedExePath"
         Set-Location -LiteralPath $appDir
-        & $packagedExePath
-        Write-LauncherLog "Packaged executable exited. ExitCode=$LASTEXITCODE"
-        exit $LASTEXITCODE
+        $process = Start-Process -FilePath $packagedExePath -WorkingDirectory $appDir -PassThru -Wait
+        Write-LauncherLog "Packaged executable exited. ExitCode=$($process.ExitCode)"
+        exit $process.ExitCode
     }
 
     if (-not (Test-Path -LiteralPath $appPath)) {
